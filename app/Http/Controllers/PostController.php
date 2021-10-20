@@ -29,7 +29,12 @@ class PostController extends Controller
         $msg = ['message'=> "Website doesnot exist"];
         $errorCode = 201;
         if($website) {
-            $userId = Auth::user()->id;//TODO
+            $userId = (Auth::check()) ? Auth::user()->id : $request->userId;//TODO
+            if(!$userId) {
+                $msg['message'] = "Either login or pass userId";
+                $errorCode = 200;
+                 return response()->json($msg, $errorCode);
+            }
             $postName = $request->name;
             $postDescription = $request->description;
             $obj = new Posts;

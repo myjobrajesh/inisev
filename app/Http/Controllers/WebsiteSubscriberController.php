@@ -20,7 +20,12 @@ class WebsiteSubscriberController extends Controller
         $msg = ['message'=> "Website doesnot exist"];
         $errorCode = 201;
         if($website) {
-            $userId = Auth::user()->id;
+            $userId = (Auth::check()) ? Auth::user()->id : $request->userId;//TODO
+            if(!$userId) {
+                $msg['message'] = "Either login or pass userId";
+                $errorCode = 200;
+                 return response()->json($msg, $errorCode);
+            }
             //check if user is already subscurverd to this website
             $wobj = WebsiteSubscribers::where("user_id", $userId)->where("website_id", $websiteId)->first();
             if(!$wobj) {
